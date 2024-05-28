@@ -23,24 +23,28 @@ class Controller:
 
 
     def handle_graph(self, e):
-        nodi, archi = self._model.buildGrafo(self._view.ddyear.value, self._view.ddcountry.value)
-        if nodi is None or archi is None:
-            self._view.txtOut2.clean()
-            self._view.txtOut2.controls.append(ft.Text(f"Il grafo e' vuoto"))
-            return
-        self._view.txtOut2.clean()
-        self._view.txtOut2.controls.append(ft.Text(f"Il grafo creato ha {self._model.getNumNodi()} nodi e {self._model.getNumArchi} archi"))
-        for arco in archi:
-            self._view.txtOut2.controls.append(ft.Text(f"{self._model.idMap[arco[0]]} :"))
+        self._model.buildGrafo(self._view.ddyear.value, self._view.ddcountry.value)
 
+        self._view.txtOut2.clean()
+        if self._model.grafo is not None:
+            self._view.txtOut2.controls.append(ft.Text("Grafo creato correttamente"))
+        else:
+            self._view.txtOut2.controls.append(ft.Text("Grafo vuoto"))
 
         self._view.update_page()
 
 
 
     def handle_volume(self, e):
-        pass
-
+        volumi = self._model.calcolaVolumi()  # volumi e' un tupla come (Retailer, peso)
+        volumi.sort(key=lambda x: x[1], reverse=True)
+        self._view.txtOut2.clean()
+        self._view.txtOut2.controls.append(
+            ft.Text(f"Il grafo creato ha {self._model.getNumNodi()} nodi e {len(self._model.grafo.edges)} archi"))
+        for elem in volumi:
+            self._view.txtOut2.controls.append(ft.Text(f"{elem[0]} --> {elem[1]} :"))
+        self._view.update_page()
 
     def handle_path(self, e):
-        pass
+        path, pesoTot = self._model.inizializzazioneRicorsione(self._view.txtN.value):
+
