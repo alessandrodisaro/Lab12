@@ -46,5 +46,5 @@ class Controller:
         self._view.update_page()
 
     def handle_path(self, e):
-        path, pesoTot = self._model.inizializzazioneRicorsione(self._view.txtN.value):
+        path, pesoTot = self._model.inizializzazioneRicorsione(self._view.txtN.value)
 

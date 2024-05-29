@@ -64,8 +64,8 @@ class Model:
 
     def inizializzazioneRicorsione(self, limite):
         parziale = []
-        parziale.append(self.idMap[self.grafo.nodes[0]])
-        path = self.ricorsione(parziale, limite, self.pesoParziale)
+        parziale.append(list(self.grafo.nodes)[0])
+        path = self.ricorsione(parziale, limite)
 
         return path, self.pesoParziale
 
@@ -80,15 +80,27 @@ class Model:
 
         # continuo
         else:
+            v0 = parziale[0]
+            print(f"con v0 :{list(self.grafo.edges(v0))}")
+            print(f"con [-1]: {list(self.grafo.edges(parziale[0]))}")
             for vicino in self.grafo.neighbors(parziale[-1]):
                 parziale.append(vicino)
                 pesoTmp = self.calcolaPeso(parziale)
 
-                # QUI METTERE QUALCOSA DEL TIPO UN CHECK PER VEDERE SE RIESCO GIA ATAGLIARE LA RICERCA
+                # QUI METTERE QUALCOSA DEL TIPO UN CHECK PER VEDERE SE RIESCO GIA A TAGLIARE LA RICERCA aggiungere un
+                # check per vedere se sono a lunghezza 4 se tra i neighbours c e il primo nodo se no non si puo fare
+                # il loop e nel caso taglio quel ramo
+
+                # TIPO
+                if len(parziale) == limite:
+                    if parziale[0] in self.grafo.neighbors(parziale[-1]):
+                        self.ricorsione(parziale, limite)
+                    else:
+                        return
+                # o una cosa cosi
 
                 self.ricorsione(parziale, limite)
                 parziale.pop()
-
 
     def calcolaPeso(self, parziale):
         peso = 0
