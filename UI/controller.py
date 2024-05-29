@@ -46,5 +46,18 @@ class Controller:
         self._view.update_page()
 
     def handle_path(self, e):
-        path, pesoTot = self._model.inizializzazioneRicorsione(self._view.txtN.value)
+        path, pesoTot = self._model.inizializzazioneRicorsione(int(self._view.txtN.value)+1)
+        if path is None or path == []:
+            self._view.txtOut2.clean()
+            self._view.txtOut2.controls.append(ft.Text("Percorso non trovato"))
+            return
+        self._view.txtOut2.clean()
+        self._view.txtOut2.controls.append(ft.Text(f"Percorso trovato con peso = {pesoTot}"))
+        # calcoclo pesi singoli
+        for i in range(len(path)-1):
+            self._view.txtOut2.controls.append(ft.Text(f"{path[i]} --> {path[i+1]}: {self._model.grafo[path[i]][path[i+1]]["peso"]} "))
+
+        self._view.update_page()
+
+
 

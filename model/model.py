@@ -64,69 +64,50 @@ class Model:
 
     def inizializzazioneRicorsione(self, limite):
         parziale = []
-        parziale.append(list(self.grafo.nodes)[0])
-        path = self.ricorsione(parziale, limite)
-
-        return path, self.pesoParziale
-
-
-    def ricorsione(self, parziale, limite):
-        # condizione terminale
-        if len(parziale) == limite:
-            pesoDaValutare = self.calcolaPeso(parziale)
-            if(pesoDaValutare > self.bestPeso):
-                self.bestPath = copy.deepcopy(parziale)
-                self.bestPeso = pesoDaValutare
-
-        # continuo
-        else:
-            v0 = parziale[0]
-            print(f"con v0 :{list(self.grafo.edges(v0))}")
-            print(f"con [-1]: {list(self.grafo.edges(parziale[0]))}")
-            for vicino in self.grafo.neighbors(parziale[-1]):
-                parziale.append(vicino)
-                pesoTmp = self.calcolaPeso(parziale)
-
-                # QUI METTERE QUALCOSA DEL TIPO UN CHECK PER VEDERE SE RIESCO GIA A TAGLIARE LA RICERCA aggiungere un
-                # check per vedere se sono a lunghezza 4 se tra i neighbours c e il primo nodo se no non si puo fare
-                # il loop e nel caso taglio quel ramo
-
-                # TIPO
-                if len(parziale) == limite:
-                    if parziale[0] in self.grafo.neighbors(parziale[-1]):
-                        self.ricorsione(parziale, limite)
-                    else:
-                        return
-                # o una cosa cosi
-
+        path = []
+        for nodo in self.grafo.nodes:
+            if len(list(self.grafo.neighbors(nodo))) != 0:
+                parziale.append(nodo)
                 self.ricorsione(parziale, limite)
                 parziale.pop()
 
+        return self.bestPath, self.bestPeso
+
+
+    def ricorsione(self, parziale, limite):
+
+        last = parziale[-1]
+        if len(parziale) == limite-1:
+            if self.grafo.has_edge(last, parziale[0]):
+                parziale.append(parziale[0])
+
+                pesoDaValutare = self.calcolaPeso(parziale)
+                if(pesoDaValutare > self.bestPeso):
+                    self.bestPath = copy.deepcopy(parziale)
+                    self.bestPeso = pesoDaValutare
+                parziale.pop()
+            return
+        else:
+            for vicino in self.grafo.neighbors(last):
+                if vicino not in parziale:
+                    parziale.append(vicino)
+                    self.ricorsione(parziale, limite)
+                    parziale.pop()
+
+
+
+
     def calcolaPeso(self, parziale):
         peso = 0
-        # da qui provo con u, v
 
-        # v = parziale[0]
-        # if parziale[-1] != v:
-        #
-        #     for u in parziale:
-        #         peso += self.grafo[v][u]["peso"]
+        for i in range(len(parziale)-1):
+            v = parziale[i]
+            u = parziale[i+1]
+            peso += self.grafo[v][u]["peso"]
 
-        ####### OPPURE FALLO CON INDICI (SOLUZIONE ALTERNATIVA)
-        v = parziale[0]
-        if parziale[-1] != v:
-            for i in range(len(parziale)-1):  # CONTROLLA SE QUESTO INDICE NON SFORA
-                v = parziale[i]
-                u = parziale[i+1]
-                peso += self.grafo[v][u]["peso"]
-        else:
-            return 0  # se ho un solo nodo NON HO ARCHI quindi il peso sara' zero
-
-        # se non entra nell esle ritorna il peso
         return peso
 
 
-            # DA CONTINUARE QUESTA PARTE
 
 
 
